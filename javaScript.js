@@ -172,6 +172,7 @@ function deleteDoneTasks() {
     {
       text: 'Cancel',
       class: 'cancel',
+      
       action: closePopup
     },
     {
@@ -222,11 +223,9 @@ function renameTask(idx) {
   );
 }
 
-
-
-
 function toggleDone(idx) {
   let tasks = getTasks();
+
   tasks[idx].done = !tasks[idx].done;
   setTasks(tasks);
   renderTasks();
