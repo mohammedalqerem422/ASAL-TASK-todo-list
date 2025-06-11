@@ -149,6 +149,9 @@ function deleteAllTasks() {
       action: function() {
         setTasks([]);
         renderTasks();
+
+
+        
         closePopup();
       }
     }
@@ -195,7 +198,7 @@ function deleteDoneTasks() {
 
 function renameTask(idx) {
   let tasks = getTasks();
-  
+
   showPopup('Rename Task',
     '<input id="renameInput" type="text" value="' + tasks[idx].text + '"/><div id="renameError" class="error"></div>',
     [
@@ -220,6 +223,8 @@ function renameTask(idx) {
           closePopup();
         }
       }
+
+
     ]
   );
 }
