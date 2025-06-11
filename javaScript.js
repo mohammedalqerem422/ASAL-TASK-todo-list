@@ -105,6 +105,8 @@ function renderTasks() {
   });
 }
 
+
+
 function addTask() {
   let text = taskInput.value;
   let error = validateTask(text);
@@ -151,7 +153,7 @@ function deleteAllTasks() {
         renderTasks();
 
 
-        
+
         closePopup();
       }
     }
