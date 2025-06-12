@@ -5,6 +5,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 8px #0001;
     padding: 30px;
+
   }
 
   h2 {
@@ -15,7 +16,9 @@
   .todoInputSection {
     border: 2px solid #ccc;
     border-radius: 8px;
+    
     padding: 24px;
+
     margin-bottom: 32px;
 
     .inputRow {

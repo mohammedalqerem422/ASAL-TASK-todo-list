@@ -66,7 +66,7 @@ function renderTasks() {
     }
   }
 
-  todoList.innerHTML = '';
+  todoList.innerHTML = '' ;
 
   if (filtered.length === 0) {
     todoList.innerHTML = '<div style="color:#888; text-align:center; margin:24px 0;">No tasks found.</div>';
