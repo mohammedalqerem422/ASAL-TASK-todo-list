@@ -1,48 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>todoList</title>
-    
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Todo List</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+  <div class="container">
     <h2>Todoinput</h2>
     <div class="todoInputSection">
       <div class="inputRow">
         <span class="inputIcon">📝</span>
-        <input id="taskInput" type="text" placeholder="Add new task...">
+        <input id="taskInput" type="text" placeholder="Add new task..." autocomplete="off">
       </div>
-
       <button id="addTaskBtn">Add new task</button>
-      <div id="inputError" class="error">   </div>
-      
+      <div id="inputError" class="error"></div>
     </div>
-    
     <h2>Todo List</h2>
-
     <div class="tabs">
-      <button class=" tabBtn active" data-tab="all">All</button>
+      <button class="tabBtn active" data-tab="all">All</button>
       <button class="tabBtn" data-tab="done">Done</button>
-
       <button class="tabBtn" data-tab="todo">Todo</button>
     </div>
-
     <div class="todoList" id="todoList"></div>
-    <div class="footerBtns" >
+    <div class="footerBtns">
       <button class="footerBtn deleteDone" id="deleteDoneBtn">Delete Done Tasks</button>
-
       <button class="footerBtn deleteAll" id="deleteAllBtn">Delete All Tasks</button>
     </div>
-
     <div id="deleteError" class="error"></div>
   </div>
-  
-   <div id="popupBg" class="popupBg" style="display:none;">
-    
+
+  <div id="popupBg" class="popupBg" style="display:none;">
     <div class="popup" id="popupContent"></div>
   </div>
+  <script src="javaScript.js"></script>
 </body>
-</html>
+</html> 
