@@ -1,34 +1,37 @@
-function getTasks() {
-  let t = localStorage.getItem('tasks');
-  if (t) {
-    return JSON.parse(t);
+let taskInput = document.getElementById('task');
+let addBtn = document.getElementById('add');
+let list = document.getElementById('list');
+let deleteAllBtn = document.getElementById('delete-all');
+let deleteDoneBtn = document.getElementById('delete-done');
+let modal = document.getElementById('modal');
+let modalContent = document.getElementById('modal-content');
+let tabs = document.querySelectorAll('.tab');
+
+  
+  function getTasks() {
+  let tasks = localStorage.getItem('tasks');
+  if (tasks) {
+    return JSON.parse(tasks);
   } else {
     return [];
   }
 }
 
-function setTasks(t) {
-  let s = JSON.stringify(t);
-  localStorage.setItem('tasks', s);
+function setTasks(tasks) {
+  let tasksString = JSON.stringify(tasks);
+  localStorage.setItem('tasks', tasksString);
 }
 
-function showError(id, msg) {
-  let el = document.getElementById(id);
-  el.textContent = msg;
+function showError(elementId, message) {
+  let element = document.getElementById(elementId);
+  element.textContent = message;
 }
 
-function clearError(id) {
-  let el = document.getElementById(id);
-  el.textContent = '';
+function clearError(elementId) {
+  let element = document.getElementById(elementId);
+  element.textContent = '';
 }
-let taskInput = document.getElementById('taskInput');
-let addTaskBtn = document.getElementById('addTaskBtn');
-let todoList = document.getElementById('todoList');
-let deleteAllBtn = document.getElementById('deleteAllBtn');
-let deleteDoneBtn = document.getElementById('deleteDoneBtn');
-let popupBg = document.getElementById('popupBg');
-let popupContent = document.getElementById('popupContent');
-let tabBtns = document.querySelectorAll('.tabBtn');
+
 
 let currentTab = 'all';
 
@@ -44,223 +47,136 @@ function validateTask(text) {
   }
   return '';
 }
-function renderTasks() {
+
+function show() {
   let tasks = getTasks();
-  let filtered = [];
+  let filteredTasks = [];
 
   if (currentTab === 'all') {
-    filtered = tasks;
+    filteredTasks = tasks;
+  } else if (currentTab === 'done') {
+    filteredTasks = tasks.filter(task => task.done);
   } else {
-    if (currentTab === 'done') {
-      for (let i = 0; i < tasks.length; i++) {
-        if (tasks[i].done) {
-          filtered.push(tasks[i]);
-        }
-      }
-    } else {
-      for (let i = 0; i < tasks.length; i++) {
-        if (!tasks[i].done) {
-          filtered.push(tasks[i]);
-        }
-      }
-    }
+    filteredTasks = tasks.filter(task => !task.done);
   }
 
-  todoList.innerHTML = '' ;
+  list.innerHTML = '';
 
-  if (filtered.length === 0) {
-    todoList.innerHTML = '<div style="color:#888; text-align:center; margin:24px 0;">No tasks found.</div>';
+  if (filteredTasks.length === 0) {
+    list.innerHTML = '<div style="color:#888; text-align:center; margin:24px 0;">No tasks found.</div>';
     deleteAllBtn.disabled = tasks.length === 0;
-    deleteDoneBtn.disabled = !tasks.some(function(t) {
-      return t.done;
-    });
+    deleteDoneBtn.disabled = !tasks.some(task => task.done);
     return;
   }
 
-  for (let j = 0; j < filtered.length; j++) {
-    let task = filtered[j];
-    let realIdx = tasks.indexOf(task);
+  for (let i = 0; i < filteredTasks.length; i++) {
+    let task = filteredTasks[i];
+    let taskIndex = tasks.indexOf(task);
 
-    let div = document.createElement('div');
-    div.className = 'todoItem';
+    let taskElement = document.createElement('div');
+    taskElement.className = 'item';
 
-    let doneClass = '';
-    if (task.done) {
-      doneClass = ' done';
-    }
+    let doneClass = task.done ? ' done' : '';
 
-    div.innerHTML = '<span class="todoText' + doneClass + '">' + task.text + '</span>' +
-      '<div class="todoActions">' +
-      '<button class="iconBtn edit" title="Rename" data-idx="' + realIdx + '">✏️</button>' +
-      '<button class="iconBtn delete" title="Delete" data-idx="' + realIdx + '">🗑️</button>' +
-      '<input type="checkbox" class="todoCheckbox" data-idx="' + realIdx + '"' + (task.done ? ' checked' : '') + '>' +
+    taskElement.innerHTML = '<span class="text' + doneClass + '">' + task.text + '</span>' +
+      '<div class="actions">' +
+      '<button class="btn edit" title="Rename" data-num="' + taskIndex + '">✏️</button>' +
+      '<button class="btn delete" title="Delete" data-num="' + taskIndex + '">🗑️</button>' +
+      '<input type="checkbox" class="check" data-num="' + taskIndex + '"' + (task.done ? ' checked' : '') + '>' +
       '</div>';
 
-    todoList.appendChild(div);
+    list.appendChild(taskElement);
   }
 
   deleteAllBtn.disabled = tasks.length === 0;
-  deleteDoneBtn.disabled = !tasks.some(function(t) {
-    return t.done;
-  });
+  deleteDoneBtn.disabled = !tasks.some(task => task.done);
 }
 
-
-
 function addTask() {
-  let text = taskInput.value;
-  let error = validateTask(text);
-  if (error !== '') {
-    showError('inputError', error);
+  let taskText = taskInput.value;
+  let errorMessage = validateTask(taskText);
+  if (errorMessage !== '') {
+    showError('error', errorMessage);
     return;
   }
-  clearError('inputError');
+  clearError('error');
   let tasks = getTasks();
   let newTask = {
-    text: text.trim(),
+    text: taskText.trim(),
     done: false
   };
   tasks.push(newTask);
   setTasks(tasks);
   taskInput.value = '';
-  renderTasks();
+  show();
 }
 
-function deleteTask(idx) {
-  let tasks = getTasks();
-  tasks.splice(idx, 1);
-  setTasks(tasks);
-  renderTasks();
+function deleteTask(taskNum) {
+  if (confirm('Are you sure you want to delete this task?')) {
+    let tasks = getTasks();
+    tasks.splice(taskNum, 1);
+    setTasks(tasks);
+    show();
+  }
 }
 
 function deleteAllTasks() {
   let tasks = getTasks();
   if (tasks.length === 0) {
-    showError('deleteError', 'No tasks to delete.');
+    showError('delete-error', 'No tasks to delete.');
     return;
   }
-  showPopup('Confirm Delete', 'Are you sure you want to delete all tasks?', [
-    {
-      text: 'Cancel',
-      class: 'cancel',
-      action: closePopup
-    },
-    {
-      text: 'Delete',
-      class: 'confirm',
-      action: function() {
-        setTasks([]);
-        renderTasks();
-
-
-
-        closePopup();
-      }
-    }
-  ]);
+  if (confirm('Are you sure you want to delete all tasks?')) {
+    setTasks([]);
+    show();
+  }
 }
 
 function deleteDoneTasks() {
   let tasks = getTasks();
-  let hasDone = false;
-  for (let i = 0; i < tasks.length; i++) {
-    if (tasks[i].done) {
-      hasDone = true;
-      break;
-    }
-  }
-  if (!hasDone) {
-    showError('deleteError', 'No done tasks to delete.');
+  let hasDoneTasks = tasks.some(task => task.done);
+  
+  if (!hasDoneTasks) {
+    showError('delete-error', 'No done tasks to delete.');
     return;
   }
-  showPopup('Confirm Delete', 'Delete all done tasks?', [
-    {
-      text: 'Cancel',
-      class: 'cancel',
-      
-      action: closePopup
-    },
-    {
-      text: 'Delete',
-      class: 'confirm',
-      action: function() {
-        let remaining = [];
-        for (let i = 0; i < tasks.length; i++) {
-          if (!tasks[i].done) {
-            remaining.push(tasks[i]);
-          }
-        }
-        setTasks(remaining);
-        renderTasks();
-        closePopup();
-      }
-    }
-  ]);
+  if (confirm('Are you sure you want to delete all done tasks?')) {
+    let remainingTasks = tasks.filter(task => !task.done);
+    setTasks(remainingTasks);
+    show();
+  }
 }
 
-function renameTask(idx) {
+function renameTask(taskNum) {
   let tasks = getTasks();
-
-  showPopup('Rename Task',
-    '<input id="renameInput" type="text" value="' + tasks[idx].text + '"/><div id="renameError" class="error"></div>',
-    [
-      {
-        text: 'Cancel',
-        class: 'cancel',
-        action: closePopup
-      },
-      {
-        text: 'Save',
-        class: 'confirm',
-        action: function() {
-          let newText = document.getElementById('renameInput').value;
-          let error = validateTask(newText);
-          if (error !== '') {
-            showError('renameError', error);
-            return;
-          }
-          tasks[idx].text = newText.trim();
-          setTasks(tasks);
-          renderTasks();
-          closePopup();
-        }
-      }
-
-
-    ]
-  );
-}
-
-function toggleDone(idx) {
-  let tasks = getTasks();
-
-  tasks[idx].done = !tasks[idx].done;
+  let newText = prompt('Enter new task name:', tasks[taskNum].text);
+  
+  if (newText === null) {
+    return;
+  }
+  
+  let errorMessage = validateTask(newText);
+  if (errorMessage !== '') {
+    alert(errorMessage);
+    return;
+  }
+  
+  tasks[taskNum].text = newText.trim();
   setTasks(tasks);
-  renderTasks();
+  show();
 }
 
-function showPopup(title, content, actions) {
-  popupContent.innerHTML = '<h3 style="margin-top:0;">' + title + '</h3><div>' + content + '</div>' +
-    '<div class="popupActions">' +
-    actions.map(function(a, i) {
-      return '<button class="' + a.class + '" id="popupBtn' + i + '">' + a.text + '</button>';
-    }).join('') +
-    '</div>';
-  popupBg.style.display = 'flex';
-
-  actions.forEach(function(a, i) {
-    document.getElementById('popupBtn' + i).onclick = a.action;
-  });
+function toggleDone(taskNum) {
+  let tasks = getTasks();
+  tasks[taskNum].done = !tasks[taskNum].done;
+  setTasks(tasks);
+  show();
 }
 
-function closePopup() {
-  popupBg.style.display = 'none';
-}
+addBtn.onclick = addTask;
 
-addTaskBtn.onclick = addTask;
-
-taskInput.onkeydown = function(e) {
-  if (e.key === 'Enter') {
+taskInput.onkeydown = function(event) {
+  if (event.key === 'Enter') {
     addTask();
   }
 };
@@ -268,44 +184,32 @@ taskInput.onkeydown = function(e) {
 deleteAllBtn.onclick = deleteAllTasks;
 deleteDoneBtn.onclick = deleteDoneTasks;
 
-tabBtns.forEach(function(btn) {
-  btn.onclick = function() {
-    tabBtns.forEach(function(b) {
-      b.classList.remove('active');
+tabs.forEach(function(tab, index) {
+  tab.onclick = function() {
+    tabs.forEach(function(t) {
+      t.classList.remove('active');
     });
-    btn.classList.add('active');
-    currentTab = btn.getAttribute('data-tab');
-    renderTasks();
+    tab.classList.add('active');
+    currentTab = index === 0 ? 'all' : index === 1 ? 'done' : 'todo';
+    show();
   };
 });
 
-todoList.onclick = function(e) {
-  if (e.target.classList.contains('delete')) {
-    let idx = parseInt(e.target.getAttribute('data-idx'));
-    showPopup('Confirm Delete', 'Delete this task?', [
-      { text: 'Cancel', class: 'cancel', action: closePopup },
-      {
-        text: 'Delete',
-        class: 'confirm',
-        action: function() {
-          deleteTask(idx);
-          closePopup();
-        }
-      }
-    ]);
+list.onclick = function(event) {
+  if (event.target.classList.contains('delete')) {
+    let taskNum = parseInt(event.target.getAttribute('data-num'));
+    deleteTask(taskNum);
   }
 
-  if (e.target.classList.contains('edit')) {
-    let idx = parseInt(e.target.getAttribute('data-idx'));
-    renameTask(idx);
+  if (event.target.classList.contains('edit')) {
+    let taskNum = parseInt(event.target.getAttribute('data-num'));
+    renameTask(taskNum);
   }
 
-  if (e.target.classList.contains('todoCheckbox')) {
-    let idx = parseInt(e.target.getAttribute('data-idx'));
-    toggleDone(idx);
+  if (event.target.classList.contains('check')) {
+    let taskNum = parseInt(event.target.getAttribute('data-num'));
+    toggleDone(taskNum);
   }
 };
 
-
-
-renderTasks();
+show();
