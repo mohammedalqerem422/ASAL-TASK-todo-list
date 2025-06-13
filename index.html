@@ -7,32 +7,32 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h2>Todoinput</h2>
-    <div class="todoInputSection">
-      <div class="inputRow">
-        <span class="inputIcon">📝</span>
-        <input id="taskInput" type="text" placeholder="Add new task..." autocomplete="off">
+  <div class="main">
+    <h2>Add Task</h2>
+    <div class="input-area">
+      <div class="input-row">
+        <span class="icon">📝</span>
+        <input id="task" type="text" placeholder="Add new task...." >
       </div>
-      <button id="addTaskBtn">Add new task</button>
-      <div id="inputError" class="error"></div>
+      <button id="add">Add Task</button>
+      <div id="error" class="error"></div>
     </div>
-    <h2>Todo List</h2>
+    <h2>Tasks</h2>
     <div class="tabs">
-      <button class="tabBtn active" data-tab="all">All</button>
-      <button class="tabBtn" data-tab="done">Done</button>
-      <button class="tabBtn" data-tab="todo">Todo</button>
+      <button class="tab active">All</button>
+      <button class="tab">Done</button>
+      <button class="tab">Todo</button>
     </div>
-    <div class="todoList" id="todoList"></div>
-    <div class="footerBtns">
-      <button class="footerBtn deleteDone" id="deleteDoneBtn">Delete Done Tasks</button>
-      <button class="footerBtn deleteAll" id="deleteAllBtn">Delete All Tasks</button>
+    <div class="list" id="list"></div>
+    <div class="buttons">
+      <button class="btn done" id="delete-done">Delete Done</button>
+      <button class="btn all" id="delete-all">Delete All</button>
     </div>
-    <div id="deleteError" class="error"></div>
+    <div id="delete-error" class="error"></div>
   </div>
 
-  <div id="popupBg" class="popupBg" style="display:none;">
-    <div class="popup" id="popupContent"></div>
+  <div id="modal" class="modal" style="display:none;">
+    <div class="modal-content" id="modal-content"></div>
   </div>
   <script src="javaScript.js"></script>
 </body>
